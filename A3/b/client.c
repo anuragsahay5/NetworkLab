@@ -18,7 +18,8 @@ void *writeFunc(void *data)
     while (1)
     {
         bzero(buffer, 80);
-        scanf("%s", buffer);
+        scanf("%[^\n]%*c",buffer);
+        // scanf("%s", buffer);
         write(socket_fd, buffer, strlen(buffer));
     }
     pthread_exit(NULL);

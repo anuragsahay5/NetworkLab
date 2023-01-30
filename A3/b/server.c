@@ -66,7 +66,8 @@ int main()
     while (1)
     {
         bzero(buffer, 80);
-        scanf("%s", buffer);
+        scanf("%[^\n]%*c", buffer);
+        // scanf("%s", buffer);
         write(socket_client, buffer, strlen(buffer));
         if (!(strcmp(buffer, "exit")))
         {
