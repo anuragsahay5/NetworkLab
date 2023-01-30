@@ -9,6 +9,8 @@
 char readMsg[80] = {0};
 char buffer[80] = {0};
 int socket_fd;
+pthread_t pid;
+int ext = 0;
 
 void *readFunc(void *data)
 
@@ -19,9 +21,8 @@ void *readFunc(void *data)
         read(socket_fd, readMsg, 80);
         if (!(strcmp(readMsg, "exit")))
         {
-            close(socket_fd);
+            ext = 1;
             pthread_exit(NULL);
-            exit(0);
         }
         printf("server : %s\n", readMsg);
     }
@@ -49,18 +50,12 @@ int main()
         exit(0);
     }
 
-    pthread_t pid;
     pthread_create(&pid, NULL, readFunc, NULL);
-    while (1)
+    while (1 && !ext)
     {
         bzero(buffer, 80);
         scanf("%s", buffer);
         write(socket_fd, buffer, strlen(buffer));
-        if (!(strcmp(buffer, "exit")))
-        {
-            pthread_cancel(pid);
-            break;
-        }
     }
 
     close(socket_fd);

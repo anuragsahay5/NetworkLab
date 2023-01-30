@@ -9,6 +9,7 @@
 char readMsg[80] = {0};
 char buffer[80] = {0};
 int socket_fd, socket_client;
+pthread_t pid;
 
 void *readFunc(void *data)
 {
@@ -16,12 +17,6 @@ void *readFunc(void *data)
     {
         bzero(readMsg, 80);
         read(socket_client, readMsg, 80);
-        if (!(strcmp(readMsg, "exit")))
-        {
-            close(socket_fd);
-            pthread_exit(NULL);
-            exit(0);
-        }
         printf("client : %s\n", readMsg);
     }
     pthread_exit(NULL);
@@ -66,7 +61,6 @@ int main()
         exit(0);
     }
 
-    pthread_t pid;
     pthread_create(&pid, NULL, readFunc, NULL);
 
     while (1)
