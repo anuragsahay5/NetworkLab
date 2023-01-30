@@ -60,6 +60,6 @@ int main()
     }
 
     close(socket_fd);
-    pthread_exit(NULL);
+    printf("Chat Terminated...\n");
     return 0;
 }

@@ -74,9 +74,8 @@ int main()
             break;
         }
     }
-
     close(socket_fd);
     close(socket_client);
-    pthread_exit(NULL);
+    printf("Chat Terminated...\n");
     return 0;
 }
