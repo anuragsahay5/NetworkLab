@@ -10,15 +10,23 @@ char readMsg[80] = {0};
 char buffer[80] = {0};
 int socket_fd;
 pthread_t pid;
+int cid;
 
 void *writeFunc(void *data)
+
 {
+
     while (1)
     {
         bzero(buffer, 80);
         scanf("%[^\n]%*c", buffer);
+        if (!(strcmp(buffer, "exit")))
+        {
+            exit(0);
+        }
         write(socket_fd, buffer, strlen(buffer));
     }
+    pthread_exit(NULL);
 }
 
 int main()
@@ -42,18 +50,25 @@ int main()
         exit(0);
     }
 
+    read(socket_fd, readMsg, 80);
+    printf("Your Id is %s. Use 0 to send msg to Server\n", readMsg);
     pthread_create(&pid, NULL, writeFunc, NULL);
 
     while (1)
     {
         bzero(readMsg, 80);
-        read(socket_fd, readMsg, 80);
-        if (!(strcmp(readMsg, "exit")))
+        int r = read(socket_fd, readMsg, 80);
+        if (!r)
         {
             pthread_cancel(pid);
             break;
         }
-        printf("server : %s\n", readMsg);
+        if (!(strcmp(readMsg, "Server : exit")))
+        {
+            pthread_cancel(pid);
+            break;
+        }
+        printf("%s\n", readMsg);
     }
 
     close(socket_fd);
