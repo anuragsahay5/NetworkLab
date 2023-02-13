@@ -7,7 +7,6 @@
 #include <pthread.h>
 
 short msgLen;
-char temp;
 char msgType;
 int msgSize;
 char msg[600];
