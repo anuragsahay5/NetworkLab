@@ -22,7 +22,7 @@ void readResponse()
         int rn = read(socket_fd, msg, 600);
         if (!rn)
         {
-            pthread_exit(NULL);
+            pthread_exit(0);
             close(socket_fd);
             printf("Server is Down\n");
             exit(0);
@@ -159,9 +159,6 @@ int main()
             printf("Request Sent\n");
         }
         sleep(1);
-        
-        /* Recieving Response from Server*/
-        // readResponse();
     }
 
     close(socket_fd);

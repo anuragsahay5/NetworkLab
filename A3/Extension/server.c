@@ -5,6 +5,11 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define cSize 4
+const int clientSize = 4;
+int socket_client[cSize];
+fd_set readSock;
+
 void sort(char *msg, short msgLen, char msgType)
 {
     if (msgType == '1')
@@ -105,7 +110,7 @@ void sort(char *msg, short msgLen, char msgType)
 
 int main()
 {
-    int socket_fd, socket_client;
+    int socket_fd;
     struct sockaddr_in server_addr, client_addr;
     socket_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (socket_fd < 0)
@@ -133,68 +138,79 @@ int main()
     }
 
     int client_addr_length = sizeof(client_addr);
-
-    bzero(&client_addr, sizeof(client_addr));
-    socket_client = accept(socket_fd, (struct sockaddr *)&client_addr, &client_addr_length);
-    if (socket_client < 0)
+    bzero(&readSock, sizeof(readSock));
+    for (int i = 0; i < clientSize; i++)
     {
-        perror("Cannot establish connection with client");
-        exit(0);
+        bzero(&client_addr, sizeof(client_addr));
+        socket_client[i] = accept(socket_fd, (struct sockaddr *)&client_addr, &client_addr_length);
+        FD_SET(socket_client[i], &readSock);
+        if (socket_client[i] < 0)
+        {
+            perror("Cannot establish connection with client");
+            exit(0);
+        }
     }
+    printf("All Clients connected successfully\n\n");
 
     char msg[600];
     while (1)
     {
-        bzero(msg, 600);
-        int rn = read(socket_client, msg, 600);
-        if (rn)
+        for (int i = 0; i < clientSize; i++)
         {
-            printf("Request recieved\n");
-            printf("Recieved data : ");
-        }
-
-        short msgLen;
-        char msgType;
-
-        memcpy(&msgLen, &msg[1], sizeof(short));
-        msgType = msg[4];
-
-        if (msgType == '1')
-        {
-            int j = 5;
-            for (int i = 0; i < msgLen; i++)
+            if (FD_ISSET(socket_client[i], &readSock))
             {
-                printf("%c ", msg[j]);
-                j++;
-            }
-            sort(&msg[0], msgLen, msgType);
-        }
-        else if (msgType == '2')
-        {
-            int j = 5;
-            for (int i = 0; i < msgLen; i++)
-            {
-                printf("%hi ", msg[j]);
-                j += 2;
-            }
-            sort(&msg[0], msgLen, msgType);
-        }
+                bzero(msg, 600);
+                int rn = read(socket_client[i], msg, 600);
+                if (rn)
+                {
+                    printf("Request recieved\n");
+                    printf("Recieved data : ");
+                }
 
-        else if (msgType == '4')
-        {
-            int j = 5;
-            for (int i = 0; i < msgLen; i++)
-            {
-                printf("%d ", msg[j]);
-                j += 4;
-            }
-            sort(&msg[0], msgLen, msgType);
-        }
-        int sn = write(socket_client, msg, 600);
+                short msgLen;
+                char msgType;
 
-        if (sn)
-        {
-            printf("\nResponse sent Successfully\n\n");
+                memcpy(&msgLen, &msg[1], sizeof(short));
+                msgType = msg[4];
+
+                if (msgType == '1')
+                {
+                    int j = 5;
+                    for (int i = 0; i < msgLen; i++)
+                    {
+                        printf("%c ", msg[j]);
+                        j++;
+                    }
+                    sort(&msg[0], msgLen, msgType);
+                }
+                else if (msgType == '2')
+                {
+                    int j = 5;
+                    for (int i = 0; i < msgLen; i++)
+                    {
+                        printf("%hi ", msg[j]);
+                        j += 2;
+                    }
+                    sort(&msg[0], msgLen, msgType);
+                }
+
+                else if (msgType == '4')
+                {
+                    int j = 5;
+                    for (int i = 0; i < msgLen; i++)
+                    {
+                        printf("%d ", msg[j]);
+                        j += 4;
+                    }
+                    sort(&msg[0], msgLen, msgType);
+                }
+                int sn = write(socket_client[i], msg, 600);
+
+                if (sn)
+                {
+                    printf("\nResponse sent Successfully\n\n");
+                }
+            }
         }
     }
 
