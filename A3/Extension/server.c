@@ -5,8 +5,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define cSize 4
-const int clientSize = 4;
+#define cSize 20
+int clientSize;
 int socket_client[cSize];
 fd_set readSock;
 
@@ -108,9 +108,10 @@ void sort(char *msg, short msgLen, char msgType)
     }
 }
 
-int main()
+int main(int argc, char *argv[])
 {
     int socket_fd;
+    clientSize = atoi(argv[2]);
     struct sockaddr_in server_addr, client_addr;
     socket_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (socket_fd < 0)
@@ -120,7 +121,7 @@ int main()
     }
     bzero(&server_addr, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(8080);
+    server_addr.sin_port = htons(atoi(argv[1]));
     server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
     int status = bind(socket_fd, (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
