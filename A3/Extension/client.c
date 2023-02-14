@@ -28,29 +28,36 @@ void readResponse()
         }
 
         printf("Recieved data : ");
-        j = 5;
         if (msgType == '1')
         {
+            j = 5;
             for (int i = 0; i < msgLen; i++)
             {
                 printf("%c ", msg[j]);
                 j++;
             }
         }
+
         else if (msgType == '2')
         {
+            j = 5;
+            short oup;
             for (int i = 0; i < msgLen; i++)
             {
-                printf("%hi ", msg[j]);
+                memcpy(&oup, &msg[j], 2);
+                printf("%hi ", oup);
                 j += 2;
             }
         }
 
         else if (msgType == '4')
         {
+            j = 5;
+            int oup;
             for (int i = 0; i < msgLen; i++)
             {
-                printf("%d ", msg[j]);
+                memcpy(&oup, &msg[j], 4);
+                printf("%hi ", oup);
                 j += 4;
             }
         }
