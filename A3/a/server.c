@@ -45,13 +45,12 @@ int main()
     }
 
     char buffer[80];
-
     
-        bzero(buffer, 80);
-        read(socket_client, buffer, 80);
-        printf("Recieved from client : %s\n", buffer);
-        write(socket_client,buffer,strlen(buffer));
-        printf("Sent to client : %s\n", buffer);
+    bzero(buffer, 80);
+    read(socket_client, buffer, 80);
+    printf("Recieved from client : %s\n", buffer);
+    write(socket_client, buffer, strlen(buffer));
+    printf("Sent to client : %s\n", buffer);
 
     close(socket_fd);
     close(socket_client);

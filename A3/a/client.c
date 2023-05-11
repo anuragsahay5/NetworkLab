@@ -29,8 +29,6 @@ int main()
 
     char buffer[80] = "Hello, This is  Anurag Sahay";
 
-    
-        bzero(buffer, 80);
         write(socket_fd,buffer,strlen(buffer));
         printf("Sent to server : %s\n", buffer);
         read(socket_fd,buffer,80);
